@@ -91,7 +91,46 @@
 
   <div id="output"></div>
 
-<script src="calc.js"></script>
+<script>
+    function calculate() {
+      let capital = parseFloat(document.getElementById('capital').value);
+      let loss = parseFloat(document.getElementById('loss').value);
+      let riskPct = parseFloat(document.getElementById('risk').value) / 100;
+      let rr = parseFloat(document.getElementById('rr').value);
+
+      let riskAmount = capital * riskPct;
+      let profitPerTrade = riskAmount * rr;
+      let trades = Math.ceil(loss / profitPerTrade);
+
+      let html = `<p><b>Risk Amount per Trade:</b> ${riskAmount.toFixed(2)}</p>`;
+      html += `<p><b>Potential Profit per Trade:</b> ${profitPerTrade.toFixed(2)}</p>`;
+      html += `<p><b>Total Trades Needed:</b> ${trades}</p>`;
+      html += `<table><tr><th>Trade #</th><th>Risk</th><th>Profit</th><th>Loss Remaining</th><th>Recovery %</th></tr>`;
+
+      let remaining = loss;
+      for (let i = 1; i <= trades; i++) {
+        remaining -= profitPerTrade;
+        if (remaining < 0) remaining = 0;
+        let recovered = ((loss - remaining) / loss * 100).toFixed(2);
+
+        html += `<tr>
+                   <td>${i}</td>
+                   <td>${riskAmount.toFixed(2)}</td>
+                   <td>${profitPerTrade.toFixed(2)}</td>
+                   <td>${remaining.toFixed(2)}</td>
+                   <td>
+                     <div class="progress-container">
+                       <div class="progress-bar" style="width:${recovered}%"></div>
+                     </div>
+                     ${recovered}%
+                   </td>
+                 </tr>`;
+      }
+      html += `</table>`;
+      document.getElementById('output').innerHTML = html;
+    }
+  </script>
 </body>
 </html>
+
 
